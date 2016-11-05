@@ -12,7 +12,7 @@ class LoginException (Exception):
     pass
    
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.bind(("you ip", 61440))
+s.bind(("your ip", 61440))
 
 s.settimeout(3)
 SALT = ''
