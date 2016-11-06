@@ -23,16 +23,16 @@ username = "your username"
 password = "your password"
 mac = 0x123456789011 #your own mac
 server = "10.100.61.3" # "auth.jlu.edu.cn"
-host_name = "LAPTOP-OBCJT8TM"
+host_name = "LAPTOP-ABCDEFGH" #can be assigned whatever values
 host_os = "DrCOM"
 
-
-def init:
+def init(host_name):
 	tmp = 'ABCDEFGH'
 	if len(host_name)>=8:
 		host_name = 'LAPTOP-'+host_name[0:8]
 	else:
 		host_name = 'LAPTOP-'+host_name+tmp[0:8-len(host_name)]
+	return host_name
 
 def challenge(svr,ran):
     while True:
@@ -198,6 +198,7 @@ def mkpkt(salt, usr, pwd, mac):
     data += md5sum("\x01" + pwd + salt + '\x00'*4)
     data += '\x01\x31\x8c\x31\x4e' + '\00'*12
     data += md5sum(data + '\x14\x00\x07\x0b')[:8] + '\x01'+'\x00'*4
+    host_name = init(host_name)
     data += host_name
     data += '\x00'.ljust(17,'\x00')+'\x0a\x0a\x0a\x0a\x00\x00\x00\x00\xca\x62\x12\x03'
     data += '\x00'.ljust(7,'\x00')+'\x94\x00\x00\x00\x06\x00\x00\x00\x00\x02\x00\x00\x00'
@@ -293,7 +294,6 @@ def main():
     print "os:MSDOS 8.0"+"\nhostname: localhost" 
     print "DrCOM Auth Router Ver 1.2"
     print "Version feature:\n[1] Auto Anti droping connection\n[2] Stronger exception handling."
-    init()
     while True:
       try:
         package_tail = login(username, password, server)
