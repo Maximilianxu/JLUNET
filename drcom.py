@@ -12,19 +12,28 @@ class LoginException (Exception):
     pass
    
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.bind(("your ip", 61440))
+s.bind(("your own ip", 61440))
 
 s.settimeout(3)
 SALT = ''
 UNLIMITED_RETRY = True
 EXCEPTION = False
 DEBUG = True
-server = "10.100.61.3" # "auth.jlu.edu.cn"
 username = "your username"
 password = "your password"
-host_name = "LAPTOP-OBCJT8TM" #use your own host_name, if the string is shorter,then add some chars appending it
-host_os = "DrCOM"
 mac = 0x123456789011 #your own mac
+server = "10.100.61.3" # "auth.jlu.edu.cn"
+host_name = "LAPTOP-OBCJT8TM"
+host_os = "DrCOM"
+
+
+def init:
+	tmp = 'ABCDEFGH'
+	if len(host_name)>=8:
+		host_name = 'LAPTOP-'+host_name[0:8]
+	else:
+		host_name = 'LAPTOP-'+host_name+tmp[0:8-len(host_name)]
+
 def challenge(svr,ran):
     while True:
       t = struct.pack("<H", int(ran)%(0xFFFF))
@@ -129,7 +138,7 @@ def keep_alive2():
     i = 1
     while True:
       try:
-        time.sleep(5)
+        time.sleep(25)
         ran += random.randint(1,10)   
         packet = keep_alive_package_builder(2,dump(ran),tail,1,False)
         #print 'DEBUG: keep_alive2,packet 4\n',packet.encode('hex')
@@ -284,6 +293,7 @@ def main():
     print "os:MSDOS 8.0"+"\nhostname: localhost" 
     print "DrCOM Auth Router Ver 1.2"
     print "Version feature:\n[1] Auto Anti droping connection\n[2] Stronger exception handling."
+    init()
     while True:
       try:
         package_tail = login(username, password, server)
